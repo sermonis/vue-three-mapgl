@@ -1,0 +1,378 @@
+import extend from 'lodash.assign';
+import shortid from 'shortid';
+
+import * as THREE from 'three';
+
+import Scene from './../engine/Scene';
+import EventEmitter from './../engine/EventEmitter';
+
+import { CSS3DObject } from './../vendor/CSS3DRenderer';
+import { CSS2DObject } from './../vendor/CSS2DRenderer';
+
+/**
+ * TODO: Make sure nothing is left behind in the heap after calling destroy().
+ *
+ * TODO: Need a single move method that handles moving all the various object
+ * layers so that the DOM layers stay in sync with the 3D layer.
+ *
+ * TODO: Double check that objects within the _object3D Object3D parent are frustum
+ * culled even if the layer position stays at the default (0,0,0) and the child
+ * objects are positioned much further away.
+ *
+ * Or does the layer being at (0,0,0) prevent the child objects from being
+ * culled because the layer parent is effectively always in view even if the
+ * child is actually out of camera.
+ */
+class Layer extends EventEmitter {
+
+    /**
+     *
+     */
+    constructor( options ) {
+
+        super();
+
+        let _defaults = {
+
+            id: shortid.generate(),
+            output: true,
+            outputToScene: true,
+
+        };
+
+        this._options = extend( {}, _defaults, options );
+
+        // console.log('this.isOutput()', this.isOutput())
+
+        if ( this.isOutput() ) {
+
+            this._object3D = new THREE.Object3D();
+
+            this._dom3D = document.createElement( 'div' );
+            this._domObject3D = new CSS3DObject( this._dom3D );
+
+            this._dom2D = document.createElement( 'div' );
+            this._domObject2D = new CSS2DObject( this._dom2D );
+
+        }
+
+    }
+
+    /**
+     * Add THREE object directly to layer.
+     */
+    add( object ) {
+
+        this._object3D.add( object );
+
+    }
+
+    /**
+     * Remove THREE object from to layer.
+     */
+    remove( object ) {
+
+        this._object3D.remove( object );
+
+    }
+
+    /**
+     *
+     */
+    addDOM3D( object ) {
+
+        this._domObject3D.add( object );
+
+    }
+
+    /**
+     *
+     */
+    removeDOM3D( object ) {
+
+        this._domObject3D.remove( object );
+
+    }
+
+    /**
+     *
+     */
+    addDOM2D( object ) {
+
+        this._domObject2D.add( object );
+
+    }
+
+    /**
+     *
+     */
+    removeDOM2D( object ) {
+
+        this._domObject2D.remove( object );
+
+    }
+
+    /**
+     * Add layer to world instance and store world reference.
+     */
+    addTo( world ) {
+
+        return world.addLayer( this );
+
+    }
+
+    /**
+     * Internal method called by World.addLayer to actually add the layer.
+     */
+    _addToWorld( world ) {
+
+        this._world = world;
+
+        return new Promise( ( resolve, reject ) => {
+
+            this._onAdd( world ).then( () => {
+
+                this.emit( 'added' );
+                resolve( this );
+
+            } ).catch( reject );
+
+        } );
+
+    }
+
+    /**
+     * Must return a promise.
+     */
+    _onAdd( world ) {
+
+        return Promise.resolve( this );
+
+    }
+
+    /**
+     *
+     */
+    getPickingId() {
+
+        if ( this._world._engine._picking ) {
+
+            return this._world._engine._picking.getNextId();
+
+        }
+
+        return false;
+    }
+
+    /**
+     * TODO: Tidy this up and don't access so many private properties to work.
+     */
+    addToPicking( object ) {
+
+        if ( !this._world._engine._picking ) {
+
+            return;
+
+        }
+
+        this._world._engine._picking.add( object );
+
+    }
+
+    /**
+     *
+     */
+    removeFromPicking( object ) {
+
+        if ( !this._world._engine._picking ) {
+
+            return;
+
+        }
+
+        this._world._engine._picking.remove( object );
+    }
+
+    /**
+     *
+     */
+    isOutput() {
+
+        return this._options.output;
+
+    }
+
+    /**
+     *
+     */
+    isOutputToScene() {
+
+        return this._options.outputToScene;
+
+    }
+
+    /**
+     * TODO: Also hide any attached DOM layers.
+     */
+    hide() {
+
+        // console.log('Layer', 'hide')
+        // console.dir(this._object3D)
+
+        if ( this._object3D ) {
+
+            this._object3D.visible = false;
+
+            if ( this._pickingMesh ) {
+
+                this._pickingMesh.visible = false;
+
+            }
+
+        }
+
+    }
+
+    /**
+     * TODO: Also show any attached DOM layers.
+     */
+    show() {
+
+        if ( this._object3D ) {
+
+            this._object3D.visible = true;
+
+            if ( this._pickingMesh ) {
+
+                this._pickingMesh.visible = true;
+
+            }
+
+        }
+
+    }
+
+    /**
+     * Destroys the layer and removes it from the scene and memory.
+     *
+     * TODO: remove event listeners. World.destroy() and World.removeLayer().
+     * Right now these do not removes layer events!!!
+     */
+    destroy() {
+
+        if ( this._object3D && this._object3D.children ) {
+
+            // Remove everything else in the layer.
+            let _child;
+
+            for ( var i = this._object3D.children.length - 1; i >= 0; i-- ) {
+
+                _child = this._object3D.children[ i ];
+
+                if ( !_child ) {
+
+                    continue;
+
+                }
+
+                this.remove( _child );
+
+                if ( _child.geometry ) {
+
+                    // Dispose of mesh and materials.
+                    _child.geometry.dispose();
+                    _child.geometry = null;
+
+                }
+
+                if ( _child.material ) {
+
+                    if ( _child.material.map ) {
+
+                        _child.material.map.dispose();
+                        _child.material.map = null;
+
+                    }
+
+                    _child.material.dispose();
+                    _child.material = null;
+
+                }
+
+            }
+
+        }
+
+        if ( this._domObject3D && this._domObject3D.children ) {
+
+            // Remove everything else in the layer.
+            let _child;
+
+            for ( var i = this._domObject3D.children.length - 1; i >= 0; i-- ) {
+
+                _child = this._domObject3D.children[ i ];
+
+                if ( !_child ) {
+
+                    continue;
+
+                }
+
+                this.removeDOM3D( _child );
+
+            }
+
+        }
+
+        if ( this._domObject2D && this._domObject2D.children ) {
+
+            // Remove everything else in the layer.
+            let _child;
+
+            for ( var i = this._domObject2D.children.length - 1; i >= 0; i-- ) {
+
+                _child = this._domObject2D.children[ i ];
+
+                if ( !_child ) {
+
+                    continue;
+
+                }
+
+                this.removeDOM2D( _child );
+
+            }
+
+        }
+
+        this._domObject3D = null;
+        this._domObject2D = null;
+
+        this._world = null;
+        this._object3D = null;
+
+    }
+
+    /**
+     * Proxy to destroy().
+     */
+    terminate() {
+
+        this.destroy();
+
+    }
+
+}
+
+export default Layer;
+
+var noNew = function( options ) {
+
+    return new Layer( options );
+
+};
+
+/**
+ * Initialise without requiring new keyword.
+ */
+export { noNew as layer };

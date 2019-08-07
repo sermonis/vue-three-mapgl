@@ -1,0 +1,346 @@
+<html>
+
+<head>
+	<title>Buildings</title>
+
+	<!-- Disabled until flickering can be worked out -->
+	<!-- <link rel="icon" href="/favicon.png"> -->
+
+	<link href="css/reset.css" rel="stylesheet" type="text/css">
+
+	<link href="css/mapgl.css" rel="stylesheet" type="text/css">
+	<link href="css/loading.css" rel="stylesheet" type="text/css">
+
+	<style type="text/css">
+		html, body {
+			height: 100%;
+			overflow: hidden;
+		}
+
+		body {
+			background: #fff;
+			height: 100%;
+		}
+
+		#locationSearchContainer {
+			top: 0;
+			position: absolute;
+			z-index: 100;
+		}
+
+		input#locationSearch {
+			background: #fff;
+			border: solid #ccc;
+			border-width: 1px 0 1px 1px;
+			border-radius: 3px 0 0 3px;
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+			color: #222;
+			font-size: 1.4em;
+			float: left;
+			height: 50px;
+			margin: 40px 0 0 60px;
+			padding: 0 15px;
+			width: 500px;
+		}
+
+			input#locationSearch:focus {
+				outline: 0;
+			}
+
+		button:hover {
+			cursor: pointer;
+		}
+
+			button:focus {
+				outline: 0;
+			}
+
+		button#locationSearchButton, button#findMe {
+			background: #249ad9;
+			border: none;
+			border-radius: 3px;
+			box-shadow: 0 0 8px rgba(0, 0, 0, 0.2);
+			color: #fff;
+			float: left;
+			font-size: 1.2em;
+			height: 50px;
+			line-height: 50px;
+			margin: 40px 0 0 0;
+			padding: 0 20px;
+		}
+
+		button#locationSearchButton {
+			border-radius: 0 3px 3px 0;
+		}
+
+			button#locationSearchButton:hover {
+				background: #28aff8;
+			}
+
+		button#findMe {
+			background: #666;
+			margin-left: 10px;
+		}
+
+			button#findMe:hover {
+				background: #888;
+			}
+
+		#locationInfoContainer {
+			bottom: 0;
+			pointer-events: none;
+			position: absolute;
+			width: 70%;
+			z-index: 100;
+		}
+
+			p#locationInfo {
+				/*color: rgba(50, 50, 50, 0.5);*/
+				color: #fff;
+				font-family: Helvetica Neue, Helvetica, Verdana, sans-serif;
+				font-size: 3em;
+				font-weight: normal;
+				letter-spacing: 1px;
+				line-height: 1em;
+				margin: 0 0 60px 60px;
+				padding: 0;
+				pointer-events: none;
+				text-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+			}
+
+		#mapgl-logo-container {
+			position: absolute;
+			bottom: 25px;
+			right: 20px;
+			z-index: 9998;
+		}
+
+			#mapgl-logo-container a {
+				background: url("http://mapgl.apps.rawk.es/img/mapgl-logo.png");
+				background-size: cover;
+				display: block;
+				height: 66px;
+				overflow: hidden;
+				text-indent: -9999em;
+				width: 255px;
+			}
+
+		.uv-icon {
+			bottom: 80px !important;
+			right: 262px !important;
+			z-index: 5000 !important;
+		}
+	</style>
+</head>
+<body>
+	<div id="mapgl-container"></div>
+
+	<!-- <a href="https://github.com/robhawkes/mapgl"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 200;" src="https://github-camo.global.ssl.fastly.net/38ef81f8aca64bb9a64448d0d70f1308ef5341ab/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f6461726b626c75655f3132313632312e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png"></a> -->
+
+	<div id="locationSearchContainer">
+		<input type="text" placeholder="Адрес" id="locationSearch"></input>
+		<button id="locationSearchButton">Найти</input>
+
+		<!-- <button id="findMe">My Location</input> -->
+	</div>
+
+	<div id="locationInfoContainer">
+		<p id="locationInfo"></p>
+	</div>
+
+	<div id="mapgl-logo-container">
+		<a href="http://mapgl.com"></a>
+	</div>
+
+    <script src="js/mapgl.min.js"></script>
+
+	<!-- <script src="../../dist/mapgl.min.js"></script> -->
+
+	<script>
+		// Debug output
+		MapGL.DEBUG = false;
+
+		MapGL.ENABLE_OUTLINES = false;
+		MapGL.ENABLE_ROADS = true;
+
+		var city = new MapGL.City();
+		city.init({
+			coords: [-0.01924, 51.50358], // Canary Wharf
+			domElement: document.getElementById("mapgl-container")
+		}).done(function() {
+			updateLocationInfo();
+		});
+
+		var findMe = document.getElementById("findMe");
+		findMe.addEventListener("click", function(event) {
+			event.preventDefault();
+			loadLocation();
+		});
+
+		var locationSearch = document.getElementById("locationSearch");
+		locationSearch.addEventListener("keydown", onLocationKeyDown);
+
+		var locationSearchButton = document.getElementById("locationSearchButton");
+		locationSearchButton.addEventListener("click", function(event) {
+			event.preventDefault();
+			changeLocation(locationSearch.value);
+		});
+
+		// http://jsfiddle.net/CvSW4/
+		function loadLocation() {
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(
+					changePosition,
+					errorCallback_highAccuracy,
+					{maximumAge:600000, timeout:5000, enableHighAccuracy: true}
+				);
+			} else {
+				console.log("Unfortunately, your browser doesn't support geolocation");
+			}
+		}
+
+		function errorCallback_highAccuracy(error) {
+			if (error.code == error.TIMEOUT) {
+				// Attempt to get GPS loc timed out after 5 seconds,
+				// try low accuracy location
+				console.log("Attempting to get low accuracy location");
+				navigator.geolocation.getCurrentPosition(
+					changePosition,
+					errorCallback_lowAccuracy,
+					{maximumAge:600000, timeout:10000, enableHighAccuracy: false});
+				return;
+			}
+
+			var msg = "Can't get your location (high accuracy attempt). Error = ";
+			if (error.code == 1)
+				msg += "PERMISSION_DENIED";
+			else if (error.code == 2)
+				msg += "POSITION_UNAVAILABLE";
+			msg += ", msg = "+error.message;
+
+			console.log(msg);
+		}
+
+		function errorCallback_lowAccuracy(error) {
+			var msg = "Can't get your location (low accuracy attempt). Error = ";
+			if (error.code == 1)
+				msg += "PERMISSION_DENIED";
+			else if (error.code == 2)
+				msg += "POSITION_UNAVAILABLE";
+			else if (error.code == 3)
+				msg += "TIMEOUT";
+			msg += ", msg = "+error.message;
+
+			console.log(msg);
+		}
+
+		function changePosition(position) {
+			// var latitude = position.coords.latitude;
+			// var longitude = position.coords.longitude;
+            //
+			// // window.location.href = "http://" + document.location.host + "/demo.html#" + latitude + "," + longitude;
+			// window.location.href = "http://" + document.location.host + "/examples/buildings/#" + latitude + "," + longitude;
+            //
+			// // Force reload as # prevents automatic refresh
+			// window.location.reload();
+		}
+
+		function onLocationKeyDown(event) {
+			if (event.keyCode == 13){
+				changeLocation(locationSearch.value);
+			}
+		}
+
+		function changeLocation(location) {
+			console.log("Loading location: " + location);
+
+			var url = "http://nominatim.openstreetmap.org/search?format=json&q=";
+			d3.json(url + location, function(error, response) {
+				if (error) return console.warn(error);
+
+				if (response && response[0] && response[0].lat && response[0].lon) {
+					var position = {
+						coords: {
+							latitude: response[0].lat,
+							longitude: response[0].lon
+						}
+					};
+
+					changePosition(position);
+				}
+			});
+		}
+
+		var locationInfo = document.getElementById("locationInfo");
+		var locationActive = false;
+		var previousCoords;
+		function updateLocationInfo() {
+			var coords = city.geo.center;
+			// history.pushState(null, null, "http://" + document.location.host + "/demo.html#" + coords[1] + "," + coords[0]);
+
+			if (locationActive) {
+				return;
+			}
+
+			if (!city.geo.center || (previousCoords && Math.abs(city.geo.center[0] - previousCoords[0]) < 0.0025 && Math.abs(city.geo.center[1] - previousCoords[1]) < 0.0025)) {
+				previousCoords = [coords[0], coords[1]];
+				setTimeout(updateLocationInfo, 1000);
+				return;
+			}
+
+			// Update URL coords
+			// history.pushState(null, null, "http://" + document.location.host + "/demo.html#" + coords[1] + "," + coords[0]);
+
+			var url = "http://nominatim.openstreetmap.org/reverse?format=json&zoom=18&addressdetails=1&lat=" + coords[1] + "&lon=" + coords[0];
+
+			locationActive = true;
+			// d3.json(url + location, function(error, response) {
+			d3.json(url, function(error, response) {
+				if (error) return console.warn(error);
+
+				if (response && response.address) {
+					var address = response.address;
+
+					var locationString = ((address.suburb) ? address.suburb + ", " : "") + ((address.city) ? address.city + ", " : "") + ((address.country) ? address.country : "");
+					locationInfo.innerHTML = locationString;
+
+					coords = city.geo.center;
+					previousCoords = [coords[0], coords[1]];
+
+					locationActive = false;
+
+					setTimeout(updateLocationInfo, 1000);
+				}
+			});
+		}
+	</script>
+
+	<!-- UserVoice -->
+  <script>
+    // Include the UserVoice JavaScript SDK (only needed once on a page)
+    // UserVoice=window.UserVoice||[];(function(){var uv=document.createElement('script');uv.type='text/javascript';uv.async=true;uv.src='//widget.uservoice.com/d3QJVEdM9wqj9klQIOrqA.js';var s=document.getElementsByTagName('script')[0];s.parentNode.insertBefore(uv,s)})();
+    //
+    // // Set colors
+	// 	UserVoice.push(["set", {
+	// 	  accent_color: "#448dd6",
+	// 	  contact_title: "Send us a message",
+	// 	  menu_enabled: false,
+	// 	  mode: "contact",
+	// 	  permalinks_enabled: false,
+	// 	  post_idea_enabled: false,
+	// 	  screenshot_enabled: false,
+	// 	  smartvote_enabled: false,
+	// 	  trigger_background_color: "rgba(46, 49, 51, 0.6)",
+	// 	  trigger_color: "white",
+	// 	  trigger_position: "bottom-right"
+	// 	}]);
+    //
+	// 	// Add default trigger to the bottom-right corner of the window:
+	// 	UserVoice.push(["addTrigger", {}]);
+  </script>
+
+
+</body>
+
+
+</html>
