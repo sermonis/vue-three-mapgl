@@ -35,7 +35,7 @@ var colorScale = chroma.scale( 'YlOrBr' ).domain( [ 0,350 ] );
 
 document.getElementById( 'debugButton' ).addEventListener( 'click', ( e ) => {
 
-    alert( 'Debug' );    
+    alert( 'Debug' );
     // world.destroyDebug()
 
 } );

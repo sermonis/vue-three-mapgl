@@ -21,7 +21,7 @@ export default function ( container, antialias ) {
 
     } );
 
-    console.log( THREE.Revision );
+    // console.log( THREE.Revision );
 
     /**
      * TODO: Re-enable when this works with the skybox.
