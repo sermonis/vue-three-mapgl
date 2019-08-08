@@ -118,11 +118,12 @@ function build() {
 }
 
 function buildWorker() {
-  return gulp.src(path.join('src', config.entryFileName + '-worker.js'))
+
+  return gulp.src(path.join('src', config.entryFileName + '.worker.js'))
     .pipe($.plumber())
     .pipe(webpackStream({
       output: {
-        filename: exportFileName + '-worker.js',
+        filename: exportFileName + '.worker.js',
         libraryTarget: 'umd',
         library: config.mainVarName
       },
@@ -152,7 +153,7 @@ function buildWorker() {
     }))
     .pipe(gulp.dest(destinationFolder))
     .pipe($.filter(['*', '!**/*.js.map']))
-    .pipe($.rename(exportFileName + '-worker.min.js'))
+    .pipe($.rename(exportFileName + '.worker.min.js'))
     .pipe($.sourcemaps.init({ loadMaps: true }))
 
     // Don't mangle class names so we can use them in the console

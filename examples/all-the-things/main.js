@@ -13,12 +13,12 @@ world._environment._skybox.setInclination(0.3);
 MapGL.Controls.orbit().addTo(world);
 
 // CartoDB basemap
-MapGL.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
   attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
 }).addTo(world);
 
-// Buildings and roads from Mapzen (polygons and linestrings)
-var topoJSONTileLayer = MapGL.topoJSONTileLayer('https://tile.mapzen.com/mapzen/vector/v1/buildings,roads/{z}/{x}/{y}.topojson?api_key=vector-tiles-NT5Emiw', {
+// Buildings and roads from Tilezen (polygons and linestrings)
+MapGL.mvtTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.mvt?api_key=-P8vfoBlQHWiTrDduihXhA', {
   interactive: false,
   style: function(feature) {
     var height;
@@ -39,6 +39,7 @@ var topoJSONTileLayer = MapGL.topoJSONTileLayer('https://tile.mapzen.com/mapzen/
       lineRenderOrder: 2
     };
   },
+  layers: ['buildings', 'roads'],
   filter: function(feature) {
     // Don't show points
     return feature.geometry.type !== 'Point';

@@ -1,6 +1,7 @@
 import TileLayer from './TileLayer';
-import ImageTile from './ImageTile';
-import ImageTileLayerBaseMaterial from './ImageTileLayerBaseMaterial';
+import RasterTile from './RasterTile';
+import RasterTileLayerBaseMaterial from './RasterTileLayerBaseMaterial';
+import Geo from '../../geo/Geo';
 
 import throttle from 'lodash.throttle';
 import extend from 'lodash.assign';
@@ -69,7 +70,7 @@ import * as THREE from 'three';
 /**
  *
  */
-class ImageTileLayer extends TileLayer {
+class RasterTileLayer extends TileLayer {
 
     /**
      *
@@ -78,7 +79,7 @@ class ImageTileLayer extends TileLayer {
 
         var defaults = {
 
-            distance: 300000,
+            distance: 300000 * Geo.multiplier,
 
         };
 
@@ -110,11 +111,11 @@ class ImageTileLayer extends TileLayer {
                 var baseMaterial;
                 if ( this._world._environment._skybox ) {
 
-                    baseMaterial = ImageTileLayerBaseMaterial( '#f5f5f3', this._world._environment._skybox.getRenderTarget() );
+                    baseMaterial = RasterTileLayerBaseMaterial( '#f5f5f3', this._world._environment._skybox.getRenderTarget() );
 
                 } else {
 
-                    baseMaterial = ImageTileLayerBaseMaterial( '#f5f5f3' );
+                    baseMaterial = RasterTileLayerBaseMaterial( '#f5f5f3' );
 
                 }
 
@@ -206,7 +207,7 @@ class ImageTileLayer extends TileLayer {
      */
     _createTile( quadcode, layer ) {
 
-        return new ImageTile( quadcode, this._path, layer );
+        return new RasterTile( quadcode, this._path, layer );
 
     }
 
@@ -243,15 +244,15 @@ class ImageTileLayer extends TileLayer {
 
 }
 
-export default ImageTileLayer;
+export default RasterTileLayer;
 
 var noNew = function ( path, options ) {
 
-    return new ImageTileLayer( path, options );
+    return new RasterTileLayer( path, options );
 
 };
 
 /**
  * Initialise without requiring new keyword.
  */
-export { noNew as imageTileLayer };
+export { noNew as rasterTileLayer };

@@ -1,11 +1,11 @@
 importScripts('../vendor/three.min.js');
 
-// Special version of MapGL without controls (no DOM errors)
+// Special version of ViziCities without controls (no DOM errors)
 importScripts('../../dist/mapgl.worker.min.js');
 
 const DEBUG = false;
 
-if (DEBUG) { console.log('Worker started', Date.now()); }
+if (DEBUG) { console.log('Worker started.', Date.now()); }
 
 // Send startup message to main thread
 postMessage({
@@ -18,7 +18,7 @@ onmessage = function(event) {
   if (!event.data.method) {
     postMessage({
       type: 'error',
-      payload: 'No method provided'
+      payload: 'No method provided.'
     });
 
     return;
@@ -50,7 +50,7 @@ onmessage = function(event) {
 
   // Call method with given arguments
   _method.apply(this, event.data.args).then(function(result) {
-    if (DEBUG) { console.log('Message sent from worker', Date.now()); }
+    if (DEBUG) { console.log('Message sent from worker.', Date.now()); }
 
     // Return results
     postMessage({

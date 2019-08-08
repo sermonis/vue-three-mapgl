@@ -32,6 +32,7 @@
 
 import TileLayer from './TileLayer';
 import GeoJSONTile from './GeoJSONTile';
+import Geo from '../../geo/Geo';
 
 import extend from 'lodash.assign';
 import throttle from 'lodash.throttle';
@@ -51,7 +52,7 @@ class GeoJSONTileLayer extends TileLayer {
         var defaults = {
 
             maxLOD: 14,
-            distance: 30000,
+            distance: 100000 * Geo.multiplier,
             workers: false,
 
         };

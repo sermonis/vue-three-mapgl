@@ -5,7 +5,7 @@ importScripts('../../dist/mapgl.worker.min.js');
 
 const DEBUG = false;
 
-if (DEBUG) { console.log('Worker started', Date.now()); }
+if (DEBUG) { console.log('Worker started.', Date.now()); }
 
 // Send startup message to main thread
 postMessage({
@@ -25,7 +25,7 @@ onmessage = function(event) {
   }
 
   var time = Date.now();
-  if (DEBUG) { console.log('Message received from main thread', time, event.data); }
+  if (DEBUG) { console.log('Message received from main thread.', time, event.data); }
   // if (DEBUG) console.log('Time to receive message', time - event.data);
 
   // Run method
@@ -50,7 +50,7 @@ onmessage = function(event) {
 
   // Call method with given arguments
   _method.apply(this, event.data.args).then(function(result) {
-    if (DEBUG) { console.log('Message sent from worker', Date.now()); }
+    if (DEBUG) { console.log('Message sent from worker.', Date.now()); }
 
     // Return results
     postMessage({

@@ -5,7 +5,7 @@ importScripts('../../dist/mapgl.worker.min.js');
 
 const DEBUG = false;
 
-if (DEBUG) { console.log('Worker started.', Date.now()); }
+if (DEBUG) { console.log('Worker started', Date.now()); }
 
 // Send startup message to main thread
 postMessage({
@@ -18,7 +18,7 @@ onmessage = function(event) {
   if (!event.data.method) {
     postMessage({
       type: 'error',
-      payload: 'No method provided.'
+      payload: 'No method provided'
     });
 
     return;

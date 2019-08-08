@@ -7,7 +7,8 @@ import ShaderPass from './ShaderPass';
 import MaskPass, {ClearMaskPass} from './MaskPass';
 
 /**
- * @author alteredq / http://alteredqualia.com/
+ * TODO: Look at THREE.JS Buffer Animation System ( three.bas ).
+ * SEE: https://github.com/zadvorsky/three.bas
  */
 
 var EffectComposer = function ( renderer, renderTarget ) {

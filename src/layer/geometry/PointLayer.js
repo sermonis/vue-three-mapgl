@@ -115,13 +115,13 @@ class PointLayer extends Layer {
             // Store geometry representation as instances of THREE.BufferAttribute.
             PointLayer.SetBufferAttributes( this._projectedCoordinates, this._options ).then( ( result ) => {
 
-                console.log( result.attributes );
+                // console.log( result.attributes );
 
                 this._bufferAttributes = Buffer.mergeAttributes( result.attributes );
                 // this._bufferAttributes = result.attributes;
                 this._flat = result.flat;
 
-                console.dir( this._bufferAttributes );
+                // console.dir( this._bufferAttributes );
 
                 var attributeLengths = {
 
@@ -375,15 +375,14 @@ class PointLayer extends Layer {
      */
     static SetMesh( attributes, attributeLengths, flat, style, options, skybox ) {
 
-        // alert('setMesh');
-        console.log( '-------------------------------------------' );
-        console.log( 'attributes', attributes );
-        console.log( 'attributeLengths', attributeLengths );
-        console.log( 'flat', flat );
-        console.log( 'style', style );
-        console.log( 'options', options );
-        console.log( 'skybox', skybox );
-        console.log( '-------------------------------------------' );
+        // console.log( '-------------------------------------------' );
+        // console.log( 'attributes', attributes );
+        // console.log( 'attributeLengths', attributeLengths );
+        // console.log( 'flat', flat );
+        // console.log( 'style', style );
+        // console.log( 'options', options );
+        // console.log( 'skybox', skybox );
+        // console.log( '-------------------------------------------' );
 
         var geometry = new THREE.BufferGeometry();
 
@@ -464,7 +463,6 @@ class PointLayer extends Layer {
 
         }
 
-
         // mesh.position.y = 5;
 
         // var _geometry = new THREE.BoxBufferGeometry( 10, 10, 10 );
@@ -481,8 +479,8 @@ class PointLayer extends Layer {
 
         return Promise.resolve( {
 
-            // mesh: mesh,
-            mesh: _cube,
+            mesh: mesh,
+            // mesh: _cube,
             // mesh: _boxHelper,
             pickingMesh: pickingMesh,
 

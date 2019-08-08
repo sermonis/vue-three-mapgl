@@ -34,7 +34,7 @@ Geo.ECC2 = 0.081819191 * 0.081819191;
  * A multiplier of 0.1 would mean a 1:0.1 mapping between WebGL and EPSG:3857
  * coordinates (1 EPSG:3857 metre === 0.1 WebGL units).
  */
-Geo.multiplier = 0.1;
+Geo.multiplier = 1;
 
 /**
  *

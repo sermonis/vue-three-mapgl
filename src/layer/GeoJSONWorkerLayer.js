@@ -108,16 +108,49 @@ class GeoJSONWorkerLayer extends Layer {
             var geojson = _geojson;
             var transferrables = [];
 
+            var layers = [];
+
+            if (this._options.layers) {
+
+                layers = this._options.layers;
+
+            }
+
+            // TODO: Allow filter method to be run here.
             if ( typeof geojson !== 'string' ) {
 
-                this._geojson = geojson = Buffer.stringToUint8Array( JSON.stringify( geojson ) );
+                // TODO: De-dupe with non-object processing in next section
+                var fc = GeoJSON.collectFeatures( geojson, layers, this._options.topojson );
+                var features = fc.features;
+
+                // Run filter, if provided
+                if ( this._options.filter ) {
+
+                    fc.features = features.filter( this._options.filter );
+
+                }
+
+                if ( this._options.onEachFeature ) {
+
+                    var feature;
+                    for ( var i = 0; i < features.length; i++ ) {
+
+                        feature = features[ i ];
+                        this._options.onEachFeature( feature );
+
+                    };
+
+                }
+
+                this._geojson = geojson = Buffer.stringToUint8Array( JSON.stringify( fc ) );
+
                 transferrables.push( geojson.buffer );
 
-                this._execWorker( geojson, this._options.topojson, this._world._originPoint, style, this._options.interactive, pointGeometry, transferrables ).then( () => {
+                this._execWorker( geojson, this._options.topojson, this._options.headers, this._world._originPoint, style, this._options.interactive, pointGeometry, transferrables ).then( () => {
 
                     resolve();
 
-                }).catch( reject );
+                } ).catch( reject );
 
             } else if ( typeof this._options.filter === 'function' || typeof this._options.onEachFeature === 'function' ) {
 
@@ -128,7 +161,7 @@ class GeoJSONWorkerLayer extends Layer {
                     //   return;
                     // }
 
-                    var fc = GeoJSON.collectFeatures( res, this._options.topojson );
+                    var fc = GeoJSON.collectFeatures(res, layers, this._options.topojson);
                     var features = fc.features;
 
                     // Run filter, if provided.
@@ -792,7 +825,7 @@ class GeoJSONWorkerLayer extends Layer {
 
                     resolve();
 
-                }).catch( reject );
+                } ).catch( reject );
 
             } else {
 
@@ -821,11 +854,17 @@ class GeoJSONWorkerLayer extends Layer {
 
             GeoJSONWorkerLayer.ProcessGeoJSON( geojson, headers ).then( ( res ) => {
 
-                /**
-                 * Collects features into a single FeatureCollection.
-                 * Also converts TopoJSON to GeoJSON if instructed.
-                 */
-                var geojson = GeoJSON.collectFeatures( res, topojson );
+                var geojson = res;
+
+                 if ( !geojson.features ) {
+
+                     /**
+                      * Collects features into a single FeatureCollection.
+                      * Also converts TopoJSON to GeoJSON if instructed.
+                      */
+                     geojson = GeoJSON.collectFeatures( res, topojson );
+
+                 }
 
                 /**
                  * TODO: Check that GeoJSON is valid / usable.
@@ -1005,6 +1044,13 @@ class GeoJSONWorkerLayer extends Layer {
                     }
 
                     if ( geometry.type === 'Point' || geometry.type === 'MultiPoint' ) {
+
+                        if ( !pointGeometry ) {
+
+                            console.warn('Skipping point geometry as no function provided!');
+                            continue;
+
+                        }
 
                         coordinates = ( PointLayer.isSingle( coordinates )) ? [ coordinates ] : coordinates;
 

@@ -19,14 +19,19 @@ controls.addTo( map );
 // https://github.com/UDST/mapgl/issues/134
 
 // CartoDB basemap
-MapGL.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
-// MapGL.imageTileLayer('http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
-// MapGL.imageTileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+// https://xyz.api.here.com/tiles/herebase.02/2/3/1/omv?access_token=AGln99HORnqL1kfIQtsQl70
+MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+// MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
+// MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 
     // attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="http://cartodb.com/attributions">CartoDB</a>'
     // attribution: null,
 
-} ).addTo( map );
+} ).addTo( map ).then( () => {
+
+    console.log('Added Raster Tile Layer to world.');
+
+} );
 
 // console.dir(world)
 
@@ -72,26 +77,35 @@ MapGL.geoJSONLayer( json, {
 
         return {
 
-            // color: color,
-            // color: '#4B70F5',
-            color: 'red',
-            opacity: 1.0,
-            transparent: false,
+            color: '#ff0000',
             outline: true,
-            // outlineColor: '#fff',
-            outlineColor: '#545672',
-            outlineWidth: 3,
-            // height: 5,
+            outlineColor: '#580000',
+            lineColor: '#0000ff',
+            lineRenderOrder: 1,
+            pointColor: '#00cc00'
 
         }
 
     },
 
+    pointGeometry: function ( feature ) {
+
+        // var geometry = new THREE.SphereGeometry(20, 16, 16);
+        // return geometry;
+
+        return new THREE.SphereGeometry(200, 16, 16);
+
+    },
+
     onEachFeature: ( feature, layer ) => {},
 
-} ).addTo( map );
+} ).addTo( map ).then( () => {
 
-console.dir( MapGL );
+    console.log('Added GeoJSON Layer to world.');
+
+} );
+
+// console.dir( MapGL );
 // MapGL.PointLayer([ 37.3164129248322, 56.3479853123751 ]);
 
 

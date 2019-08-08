@@ -6,7 +6,7 @@ import * as THREE from 'three';
 /**
  * TODO: Make sure nothing is left behind in the heap after calling destroy().
  */
-class ImageTile extends Tile {
+class RasterTile extends Tile {
 
     /**
      *
@@ -267,15 +267,15 @@ class ImageTile extends Tile {
 
 }
 
-export default ImageTile;
+export default RasterTile;
 
 var noNew = function ( quadcode, path, layer ) {
 
-    return new ImageTile( quadcode, path, layer );
+    return new RasterTile( quadcode, path, layer );
 
 };
 
 /**
  * Initialise without requiring new keyword.
  */
-export { noNew as imageTile };
+export { noNew as rasterTile };

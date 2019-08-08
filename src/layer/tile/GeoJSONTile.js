@@ -111,15 +111,15 @@ class GeoJSONTile extends Tile {
      */
     requestTileAsync() {
 
+        if ( !this._mesh ) {
+
+            this._mesh = this._createMesh();
+            // this._shadowCanvas = this._createShadowCanvas();
+
+        }
+
         // Making this asynchronous really speeds up the LOD framerate.
         setTimeout( () => {
-
-            if ( !this._mesh ) {
-
-                this._mesh = this._createMesh();
-                // this._shadowCanvas = this._createShadowCanvas();
-
-            }
 
             this._requestTile();
 
@@ -487,11 +487,11 @@ class GeoJSONTile extends Tile {
 
             // console.timeEnd(this._tile);
 
-        }).catch( ( err ) => {
+        } ).catch( ( err ) => {
 
             console.error( err );
 
-        });
+        } );
 
     }
 
@@ -499,6 +499,20 @@ class GeoJSONTile extends Tile {
      *
      */
     _abortRequest() {
+
+        if ( this._ready ) {
+
+            return;
+
+        }
+
+        if ( this._options.fetch && this._controller ) {
+
+            this._controller.abort();
+            this._aborted = true;
+            return;
+
+        }
 
         if ( ( !this._request && !this._options.workers ) || this._ready ) {
 

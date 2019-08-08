@@ -88,7 +88,7 @@ class TileLayer extends Layer {
         this._tileList = [];
 
         // TODO: Work out why changing the minLOD causes loads of issues.
-        this._minLOD = 3;
+        this._minLOD = this._options.minLOD || 3;
         this._maxLOD = this._options.maxLOD;
 
         this._frustum = new THREE.Frustum();
@@ -187,7 +187,7 @@ class TileLayer extends Layer {
         if ( this._stop || !this._world || this._destroy ) {
 
             return;
-            
+
         }
 
         // var start = (performance || Date).now();

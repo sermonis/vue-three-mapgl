@@ -48,7 +48,7 @@ var GeoJSON = ( function () {
      * Attempts to merge together multiple GeoJSON Features or
      * FeatureCollections into a single FeatureCollection.
      */
-    var collectFeatures = function ( data, _topojson ) {
+    var collectFeatures = function ( data, layers, _topojson ) {
 
         var collections = [];
 
@@ -60,6 +60,18 @@ var GeoJSON = ( function () {
 
             // If not overridden, merge all features from all objects.
             for ( var tk in data.objects ) {
+
+                // console.log( tk );
+
+                if ( layers.length > 0 ) {
+
+                    if ( !layers.includes( tk ) ) {
+
+                        continue;
+
+                    }
+
+                }
 
                 collections.push( topojson.feature( data, data.objects[ tk ] ) );
 
@@ -81,6 +93,18 @@ var GeoJSON = ( function () {
 
                 // If not overridden, merge all features from all objects.
                 for ( var gk in data ) {
+
+                    // console.log( gk );
+
+                    if ( layers.length > 0 ) {
+
+                        if ( !layers.includes( gk ) ) {
+
+                            continue;
+
+                        }
+
+                    }
 
                     if ( !data[ gk ].type ) {
 

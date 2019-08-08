@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import throttle from 'lodash.throttle';
 
 import Sky from './Sky';
+import Geo from '../../geo/Geo';
 
 /**
  * TODO: Make sure nothing is left behind
@@ -47,7 +48,7 @@ class Skybox {
 
         this._settings = {
 
-            distance: 38000,
+            distance: 38000 * Geo.multiplier,
             turbidity: 10,
             reileigh: 2,
             mieCoefficient: 0.005,
@@ -118,7 +119,7 @@ class Skybox {
          */
         var skyboxUniforms = {
 
-            cubemap: { type: 't', value: cubeTarget },
+            cubemap: { type: 't', value: cubeTarget.texture },
 
         };
 
@@ -202,7 +203,7 @@ class Skybox {
         /**
          * TODO: Only do this when the cubemap has actually changed.
          */
-        this._cubeCamera.updateCubeMap( this._world._engine._renderer, this._skyScene );
+        this._cubeCamera.update( this._world._engine._renderer, this._skyScene );
 
     }
 
@@ -211,7 +212,7 @@ class Skybox {
      */
     getRenderTarget() {
 
-        return this._cubeCamera.renderTarget;
+        return this._cubeCamera.renderTarget.texture;
 
     }
 

@@ -6,9 +6,11 @@ import Geo from './geo/Geo.js';
 import Layer, { layer } from './layer/Layer';
 import LayerGroup, { layerGroup } from './layer/LayerGroup';
 import EnvironmentLayer, { environmentLayer } from './layer/environment/EnvironmentLayer';
-import ImageTileLayer, { imageTileLayer } from './layer/tile/ImageTileLayer';
+import RasterTileLayer, { rasterTileLayer } from './layer/tile/RasterTileLayer';
 import GeoJSONTileLayer, { geoJSONTileLayer } from './layer/tile/GeoJSONTileLayer';
 import TopoJSONTileLayer, { topoJSONTileLayer } from './layer/tile/TopoJSONTileLayer';
+import MVTTileLayer, { mvtTileLayer } from './layer/tile/MVTTileLayer';
+import MVTTile, { mvtTile } from './layer/tile/MVTTile';
 import GeoJSONTile, { geoJSONTile } from './layer/tile/GeoJSONTile';
 import GeoJSONLayer, { geoJSONLayer } from './layer/GeoJSONLayer';
 import TopoJSONLayer, { topoJSONLayer } from './layer/TopoJSONLayer';
@@ -32,38 +34,61 @@ const MapGL = {
     // Public API
     World: World,
     world: world,
+
     Controls: Controls,
     Geo: Geo,
+
     Layer: Layer,
     layer: layer,
+
     EnvironmentLayer: EnvironmentLayer,
     environmentLayer: environmentLayer,
-    ImageTileLayer: ImageTileLayer,
-    imageTileLayer: imageTileLayer,
+
+    RasterTileLayer: RasterTileLayer,
+    rasterTileLayer: rasterTileLayer,
+
     GeoJSONTileLayer: GeoJSONTileLayer,
     geoJSONTileLayer: geoJSONTileLayer,
+
     GeoJSONTile: GeoJSONTile,
     geoJSONTile: geoJSONTile,
+
     TopoJSONTileLayer: TopoJSONTileLayer,
     topoJSONTileLayer: topoJSONTileLayer,
+
     GeoJSONLayer: GeoJSONLayer,
     geoJSONLayer: geoJSONLayer,
+
+    MVTTile: MVTTile,
+    mvtTile: mvtTile,
+
     TopoJSONLayer: TopoJSONLayer,
     topoJSONLayer: topoJSONLayer,
+
     GeoJSONWorkerLayer: GeoJSONWorkerLayer,
     geoJSONWorkerLayer: geoJSONWorkerLayer,
+
     TopoJSONWorkerLayer: TopoJSONWorkerLayer,
     topoJSONWorkerLayer: topoJSONWorkerLayer,
+
+    MVTTileLayer: MVTTileLayer,
+    mvtTileLayer: mvtTileLayer,
+
     PolygonLayer: PolygonLayer,
     polygonLayer: polygonLayer,
+
     PolylineLayer: PolylineLayer,
     polylineLayer: polylineLayer,
+
     PointLayer: PointLayer,
     pointLayer: pointLayer,
+
     Point: Point,
     point: point,
+
     LatLon: LatLon,
     latLon: latLon,
+
     PickingMaterial: PickingMaterial,
     Util: Util,
 
