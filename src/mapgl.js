@@ -5,17 +5,24 @@ import Geo from './geo/Geo.js';
 
 import Layer, { layer } from './layer/Layer';
 import LayerGroup, { layerGroup } from './layer/LayerGroup';
+
 import EnvironmentLayer, { environmentLayer } from './layer/environment/EnvironmentLayer';
 import RasterTileLayer, { rasterTileLayer } from './layer/tile/RasterTileLayer';
 import GeoJSONTileLayer, { geoJSONTileLayer } from './layer/tile/GeoJSONTileLayer';
 import TopoJSONTileLayer, { topoJSONTileLayer } from './layer/tile/TopoJSONTileLayer';
+
+import ThreeJSONLayer, { threeJSONLayer } from './layer/ThreeJSONLayer';
+
 import MVTTileLayer, { mvtTileLayer } from './layer/tile/MVTTileLayer';
 import MVTTile, { mvtTile } from './layer/tile/MVTTile';
+
 import GeoJSONTile, { geoJSONTile } from './layer/tile/GeoJSONTile';
 import GeoJSONLayer, { geoJSONLayer } from './layer/GeoJSONLayer';
+
 import TopoJSONLayer, { topoJSONLayer } from './layer/TopoJSONLayer';
 import GeoJSONWorkerLayer, { geoJSONWorkerLayer } from './layer/GeoJSONWorkerLayer';
 import TopoJSONWorkerLayer, { topoJSONWorkerLayer } from './layer/TopoJSONWorkerLayer';
+
 import PolygonLayer, { polygonLayer } from './layer/geometry/PolygonLayer';
 import PolylineLayer, { polylineLayer } from './layer/geometry/PolylineLayer';
 import PointLayer, { pointLayer } from './layer/geometry/PointLayer';
@@ -61,6 +68,9 @@ const MapGL = {
 
     MVTTile: MVTTile,
     mvtTile: mvtTile,
+
+    ThreeJSONLayer: ThreeJSONLayer,
+    threeJSONLayer: threeJSONLayer,
 
     TopoJSONLayer: TopoJSONLayer,
     topoJSONLayer: topoJSONLayer,

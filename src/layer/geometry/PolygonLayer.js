@@ -586,7 +586,7 @@ class PolygonLayer extends Layer {
 
         }
 
-        if (options.interactive) {
+        if ( options.interactive ) {
 
             material = new PickingMaterial();
             material.side = THREE.BackSide;
@@ -595,7 +595,7 @@ class PolygonLayer extends Layer {
 
         }
 
-        return Promise.resolve({
+        return Promise.resolve( {
 
             mesh: mesh,
             pickingMesh: pickingMesh,

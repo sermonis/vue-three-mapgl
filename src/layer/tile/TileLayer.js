@@ -199,7 +199,9 @@ class TileLayer extends Layer {
 
         // 2. Add the four root items of the quadtree to a check list.
         var checkList = this._checklist;
+
         checkList = [];
+
         checkList.push( this._requestTile( '0', this ) );
         checkList.push( this._requestTile( '1', this ) );
         checkList.push( this._requestTile( '2', this ) );

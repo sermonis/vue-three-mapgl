@@ -235,7 +235,7 @@ class PointLayer extends Layer {
 
         return new Promise( ( resolve ) => {
 
-            var height = 0;
+            var height = 0, geometry;
 
             // Convert height into world units.
             if ( options.style.pointHeight ) {
@@ -258,13 +258,13 @@ class PointLayer extends Layer {
                  *
                  * TODO: Allow point geometry to be customised / overridden.
                  */
-                var geometryWidth = Geo.metresToWorld( 25, options.pointScale );
-                var geometryHeight = Geo.metresToWorld( 200, options.pointScale );
+                let _geometryWidth = Geo.metresToWorld( 25, options.pointScale );
+                let _geometryHeight = Geo.metresToWorld( 200, options.pointScale );
 
-                var _geometry = new THREE.BoxGeometry( geometryWidth, geometryHeight, geometryWidth );
+                let _geometry = new THREE.BoxGeometry( _geometryWidth, _geometryHeight, _geometryWidth );
 
                 // Shift geometry up so it sits on the ground.
-                _geometry.translate( 0, geometryHeight * 0.5, 0 );
+                _geometry.translate( 0, _geometryHeight * 0.5, 0 );
 
                 // Pull attributes out of debug geometry.
                 geometry = new THREE.BufferGeometry().fromGeometry( _geometry );

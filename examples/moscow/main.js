@@ -12,6 +12,8 @@ var world = MapGL.world( 'world', {
 // Add controls
 MapGL.Controls.orbit().addTo( world );
 
+// import * as THREE from 'three'
+
 
 // How to move from city to city?
 // https://github.com/UDST/mapgl/issues/134
@@ -37,6 +39,7 @@ document.getElementById( 'debugButton' ).addEventListener( 'click', ( e ) => {
 
     alert( 'Debug' );
     // world.destroyDebug()
+    // onMesh:
 
 } );
 
@@ -231,3 +234,92 @@ MapGL.geoJSONLayer( 'https://gist.github.com/sermonis/0ca99dc8e4e4c4078402f35abc
     }
 
 } ).addTo( world );
+
+let _aqua = [
+
+    // Waterway / Natural watercourses
+    'river', 'riverbank', 'stream', 'tidal_channel', 'lake',
+
+    // Waterway / Man-made waterways
+    'canal', 'drain', 'ditch', 'pressurised', 'fairway',
+
+    // Natural / Water related
+    'water', 'wetland', 'beach', 'coastline',
+
+    // Place / Other places
+    'sea', 'ocean',
+
+    // Amenity / Other places
+    'fountain',
+
+    // Landuse / Other Landuse Key Values
+    'basin',
+
+];
+
+// Buildings from Tilezen
+MapGL.mvtTileLayer('https://tile.nextzen.org/tilezen/vector/v1/all/{z}/{x}/{y}.mvt?api_key=-P8vfoBlQHWiTrDduihXhA', {
+
+    workers: false,
+    interactive: false,
+
+    style: function ( feature ) {
+
+        var height;
+
+        if (feature.properties.height) {
+
+            height = feature.properties.height;
+
+        } else {
+
+            height = 10 + Math.random() * 10;
+
+        }
+
+
+            if ( _aqua.includes( feature.properties.kind ) ) {
+
+                let _color = '#436981'; // harp.gl
+                // let _color = '#75CFF0'; // mapbox-gl
+                return {
+                  color: _color,
+                  height: 0.03,
+                };
+
+            }
+
+            if ( feature.properties.kind == 'earth' ) {
+
+                let _color = '#87959A'; // harp.gl
+                // let _color = '#EAE6E0'; // mapbox-gl
+                return {
+                  color: _color,
+                  height: 0.02,
+                };
+
+            }
+
+        return {
+
+            height: height,
+
+        };
+
+    },
+
+    // layers: ['buildings', 'rivers', 'water'],
+
+    // TODO: Work out why this isn't filtering out points
+    filter: function ( feature ) {
+
+        // Don't show points
+        return feature.geometry.type !== 'Point';
+
+    },
+
+} ).addTo( world ).then(function() {
+
+    console.log('Added MVT Tile Layer to world.');
+
+} );
