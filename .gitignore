@@ -32,7 +32,7 @@ build/Release
 node_modules
 
 # Distributive directory
-dist/**
+# dist/**
 
 # Optional npm cache directory
 .npm

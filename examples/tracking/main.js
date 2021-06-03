@@ -1,7 +1,7 @@
 // Moscow
-var coords = [ 55.75222, 37.61556 ];
+const coords = [ 55.75222, 37.61556 ];
 
-var world = MapGL.world( 'world', {
+const world = MapGL.world( 'world', {
 
     skybox: false,
     postProcessing: false,
@@ -19,7 +19,7 @@ MapGL.Controls.orbit().addTo( world );
 // https://github.com/UDST/mapgl/issues/134
 
 // CartoDB basemap
-MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
+MapGL.rasterTileLayer( 'http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}.png', {
 // MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/dark_nolabels/{z}/{x}/{y}.png', {
 // MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
 
@@ -33,7 +33,7 @@ MapGL.rasterTileLayer('http://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{
 // MapGL.Controls.orbit().flyToPoint({ x: 20000, y: 20000, z: 20000 }, 10, 5)
 
 // Chroma scale for height-based colours
-var colorScale = chroma.scale( 'YlOrBr' ).domain( [ 0,350 ] );
+const colorScale = chroma.scale( 'YlOrBr' ).domain( [ 0, 350 ] );
 
 document.getElementById( 'debugButton' ).addEventListener( 'click', ( e ) => {
 
@@ -43,7 +43,11 @@ document.getElementById( 'debugButton' ).addEventListener( 'click', ( e ) => {
 
 } );
 
-MapGL.geoJSONLayer('https://gist.github.com/sermonis/640e1902c850d49fe05c46f9a1eb23fc/raw/cff7940eeeaee4c94b895cc1fc8a738c2729fe52/moscow-ao.geojson', {
+// const geoJson = require( './data/moscow-ao.json' );
+
+MapGL.geoJSONLayer( 'https://gist.github.com/sermonis/640e1902c850d49fe05c46f9a1eb23fc/raw/cff7940eeeaee4c94b895cc1fc8a738c2729fe52/moscow-ao.geojson', {
+// MapGL.geoJSONLayer( './static/geojson/moscow-ao.json', {
+// MapGL.geoJSONLayer( geoJson, {
 
     output: true,
     interactive: false,
